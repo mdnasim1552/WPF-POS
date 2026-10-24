@@ -33,6 +33,7 @@ namespace PosManagement
                             options => options.UseSqlServer(connectionString));
 
                         services.AddTransient<ProductsViewModel>();
+                        services.AddTransient<PosViewModel>();
                         services.AddTransient<MainWindow>();
                     })
                     .Build();
