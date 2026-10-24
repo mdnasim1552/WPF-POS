@@ -1,4 +1,5 @@
 ﻿using PosManagement.ViewModels;
+using PosManagement.Views;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,19 +18,31 @@ namespace PosManagement
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly ProductsViewModel _viewModel;
+        private readonly PosViewModel _posViewModel;
 
-        public MainWindow(ProductsViewModel viewModel)
+        public MainWindow(
+            ProductsViewModel viewModel,
+            PosViewModel posViewModel)
         {
             InitializeComponent();
 
-            _viewModel = viewModel;
-            DataContext = _viewModel;
+            _posViewModel = posViewModel;
+
+            // Keep your existing product-management setup.
+            DataContext = viewModel;
 
             Loaded += async (_, _) =>
+                await viewModel.LoadProductsAsync();
+        }
+
+        private void OpenPos_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new PosWindow(_posViewModel)
             {
-                await _viewModel.LoadProductsAsync();
+                Owner = this
             };
+
+            window.ShowDialog();
         }
     }
 }
