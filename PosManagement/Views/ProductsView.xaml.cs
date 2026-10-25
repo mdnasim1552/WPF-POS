@@ -9,23 +9,24 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace PosManagement.Views
 {
     /// <summary>
-    /// Interaction logic for PosWindow.xaml
+    /// Interaction logic for ProductsView.xaml
     /// </summary>
-    public partial class PosWindow : Window
+    public partial class ProductsView : UserControl
     {
-        private readonly PosViewModel _viewModel;
+        private readonly ProductsViewModel _viewModel;
 
-        public PosWindow(PosViewModel viewModel)
+        public ProductsView(ProductsViewModel viewModel)
         {
             InitializeComponent();
 
             _viewModel = viewModel;
-            DataContext = _viewModel;
+            DataContext = viewModel;
 
             Loaded += async (_, _) =>
                 await _viewModel.LoadProductsAsync();
