@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PosManagement.Data;
 using PosManagement.ViewModels;
+using PosManagement.Views;
 using System.Configuration;
 using System.Data;
 using System.Windows;
@@ -32,8 +33,16 @@ namespace PosManagement
                         services.AddDbContextFactory<ApplicationDbContext>(
                             options => options.UseSqlServer(connectionString));
 
-                        services.AddTransient<ProductsViewModel>();
-                        services.AddTransient<PosViewModel>();
+                        // ViewModels: preserve page state between navigation.
+                        services.AddSingleton<MainViewModel>();
+                        services.AddSingleton<ProductsViewModel>();
+                        services.AddSingleton<PosViewModel>();
+
+
+                        services.AddTransient<ProductsView>();
+                        services.AddTransient<PosView>();
+                        services.AddTransient<SalesHistoryView>();
+
                         services.AddTransient<MainWindow>();
                     })
                     .Build();

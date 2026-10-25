@@ -46,9 +46,16 @@ namespace PosManagement.ViewModels
 
         public decimal Subtotal =>
             CartItems.Sum(item => item.LineTotal);
+        [ObservableProperty]
+        private decimal taxRate;
 
+        public decimal TaxAmount =>
+            Math.Round(
+                Math.Max(0, Subtotal - Discount) * TaxRate / 100m,
+                2,
+                MidpointRounding.AwayFromZero);
         public decimal Total =>
-            Math.Max(0, Subtotal - Discount);
+            Math.Max(0, Subtotal - Discount) + TaxAmount;
 
         public decimal ChangeAmount =>
             PaymentMethod == "Cash"
@@ -80,7 +87,12 @@ namespace PosManagement.ViewModels
                 NotifyTotalsChanged();
             };
         }
-
+        partial void OnTaxRateChanged(decimal value)
+        {
+            OnPropertyChanged(nameof(TaxAmount));
+            OnPropertyChanged(nameof(Total));
+            OnPropertyChanged(nameof(ChangeAmount));
+        }
         private void CartItem_PropertyChanged(
             object? sender, PropertyChangedEventArgs e)
         {
@@ -91,6 +103,7 @@ namespace PosManagement.ViewModels
         private void NotifyTotalsChanged()
         {
             OnPropertyChanged(nameof(Subtotal));
+            OnPropertyChanged(nameof(TaxAmount));
             OnPropertyChanged(nameof(Total));
             OnPropertyChanged(nameof(ChangeAmount));
             OnPropertyChanged(nameof(CartItemCount));
@@ -103,6 +116,7 @@ namespace PosManagement.ViewModels
 
         partial void OnDiscountChanged(decimal value)
         {
+            OnPropertyChanged(nameof(TaxAmount));
             OnPropertyChanged(nameof(Total));
             OnPropertyChanged(nameof(ChangeAmount));
         }
@@ -252,7 +266,11 @@ namespace PosManagement.ViewModels
                 StatusMessage = "Amount received is less than the total.";
                 return;
             }
-
+            if (TaxRate < 0 || TaxRate > 100)
+            {
+                StatusMessage = "Tax rate must be between 0 and 100.";
+                return;
+            }
             IsBusy = true;
 
             try
@@ -308,12 +326,17 @@ namespace PosManagement.ViewModels
                         : Total,
                     ChangeAmount = PaymentMethod == "Cash"
                         ? AmountReceived - Total
-                        : 0
+                        : 0,
+                    TaxRate = TaxRate,
+                    TaxAmount = TaxAmount,
                 };
+
 
                 foreach (var item in CartItems)
                 {
                     var product = databaseProducts[item.ProductId];
+
+                    int quantityBefore = product.StockQuantity;
 
                     sale.Items.Add(new SaleItem
                     {
@@ -326,7 +349,18 @@ namespace PosManagement.ViewModels
                     });
 
                     product.StockQuantity -= item.Quantity;
+
+                    db.StockMovements.Add(new StockMovement
+                    {
+                        ProductId = product.ProductId,
+                        MovementType = "Sale",
+                        QuantityChange = -item.Quantity,
+                        QuantityBefore = quantityBefore,
+                        QuantityAfter = product.StockQuantity,
+                        Notes = $"Invoice: {sale.InvoiceNumber}"
+                    });
                 }
+
 
                 db.Sales.Add(sale);
 
@@ -358,6 +392,19 @@ namespace PosManagement.ViewModels
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                StatusMessage =
+                    "Stock changed during checkout. Refresh products and try again.";
+
+                await LoadProductsAsync();
+
+                MessageBox.Show(
+                    StatusMessage,
+                    "Stock Changed",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
             catch (Exception ex)
             {
                 StatusMessage = $"Checkout failed: {ex.Message}";
@@ -372,6 +419,28 @@ namespace PosManagement.ViewModels
             {
                 IsBusy = false;
             }
+        }
+        public void HandleBarcodeScan(string code)
+        {
+            code = code.Trim();
+
+            if (string.IsNullOrWhiteSpace(code))
+                return;
+
+            var product = Products.FirstOrDefault(p =>
+                string.Equals(p.Barcode, code,
+                    StringComparison.OrdinalIgnoreCase)
+                || string.Equals(p.SKU, code,
+                    StringComparison.OrdinalIgnoreCase));
+
+            if (product == null)
+            {
+                StatusMessage = $"No product found for barcode/SKU: {code}";
+                return;
+            }
+
+            SelectedProduct = product;
+            AddToCartCommand.Execute(null);
         }
     }
 }

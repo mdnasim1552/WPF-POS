@@ -6,327 +6,88 @@
         xmlns:local="clr-namespace:PosManagement"
         mc:Ignorable="d"
         Title="POS Management"
-        Height="760"
-        Width="1200"
-        MinHeight="600"
-        MinWidth="900"
+        Height="780"
+        Width="1280"
+        MinHeight="650"
+        MinWidth="1000"
         WindowStartupLocation="CenterScreen"
         Background="#F3F5F9">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="225"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Sidebar -->
-        <Border Grid.Column="0" Background="#172033">
-            <StackPanel Margin="18">
-                <TextBlock Text="POS MANAGEMENT"
-                           Foreground="White"
-                           FontSize="19"
-                           FontWeight="Bold"
-                           Margin="0,8,0,5"/>
+        <!-- Persistent sidebar -->
+        <Border Grid.Column="0"
+                Background="#172033">
+            <DockPanel LastChildFill="True">
 
-                <TextBlock Text="Retail Store"
-                           Foreground="#AEBBD0"
-                           Margin="0,0,0,28"/>
+                <StackPanel DockPanel.Dock="Top"
+                            Margin="18,24,18,24">
+                    <TextBlock Text="POS MANAGEMENT"
+                               FontSize="19"
+                               FontWeight="Bold"
+                               Foreground="White"/>
 
-                <Border Background="#2B3A55"
-                        CornerRadius="8"
-                        Padding="12">
-                    <TextBlock Text="📦  Products"
-                               Foreground="White"
-                               FontWeight="SemiBold"/>
-                </Border>
+                    <TextBlock Text="Retail Management System"
+                               FontSize="11"
+                               Foreground="#AAB5C8"
+                               Margin="0,7,0,0"/>
+                </StackPanel>
 
-                <Button Content="🛒  POS / Sales"
-                        Click="OpenPos_Click"
-                        Height="42"
-                        Margin="5,12"
-                        HorizontalContentAlignment="Left"
-                        Padding="12,0"
-                        Background="#172033"
-                        Foreground="#CBD5E1"
-                        BorderThickness="0"
-                        Cursor="Hand"/>
+                <StackPanel>
+                    <TextBlock Text="WORKSPACE"
+                               Foreground="#8E9AB0"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Margin="18,8,0,10"/>
 
-                <TextBlock Text="📋  Inventory"
-                           Foreground="#CBD5E1"
-                           Margin="12,12"/>
+                    <Button Content="  POS / Sales"
+                            Command="{Binding ShowPosCommand}"
+                            Style="{StaticResource NavigationButtonStyle}"/>
 
-                <TextBlock Text="📊  Reports"
-                           Foreground="#CBD5E1"
-                           Margin="12,12"/>
-            </StackPanel>
+                    <Button Content="  Products"
+                            Command="{Binding ShowProductsCommand}"
+                            Style="{StaticResource NavigationButtonStyle}"/>
+
+                    <Button Content="  Sales History"
+                            Command="{Binding ShowSalesHistoryCommand}"
+                            Style="{StaticResource NavigationButtonStyle}"/>
+                </StackPanel>
+
+            </DockPanel>
         </Border>
 
-        <!-- Main content -->
-        <ScrollViewer Grid.Column="1"
-                      VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="26">
+        <!-- Main area -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="75"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                <TextBlock Text="Product Management"
-                           FontSize="28"
-                           FontWeight="Bold"
-                           Foreground="#172033"/>
+            <Border Grid.Row="0"
+                    Background="White"
+                    BorderBrush="#E4E7EC"
+                    BorderThickness="0,0,0,1"
+                    Padding="24,0">
+                <DockPanel VerticalAlignment="Center">
+                    <TextBlock Text="{Binding CurrentPageTitle}"
+                               FontSize="23"
+                               FontWeight="SemiBold"
+                               Foreground="#172033"
+                               VerticalAlignment="Center"/>
 
-                <TextBlock Text="Manage products, categories, prices and stock."
-                           Foreground="#64748B"
-                           Margin="0,6,0,20"/>
+                    <TextBlock Text="Retail POS"
+                               DockPanel.Dock="Right"
+                               Foreground="#667085"
+                               VerticalAlignment="Center"/>
+                </DockPanel>
+            </Border>
 
-                <!-- Product form -->
-                <Border Background="White"
-                        CornerRadius="12"
-                        Padding="20"
-                        Margin="0,0,0,18">
-
-                    <StackPanel>
-                        <TextBlock Text="Product Details"
-                                   FontSize="19"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,16"/>
-
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-
-                            <StackPanel Grid.Row="0" Grid.Column="0"
-                                        Margin="0,0,12,12">
-                                <TextBlock Text="Product Name"
-                                           Margin="0,0,0,5"/>
-                                <TextBox Text="{Binding ProductName,
-                                    UpdateSourceTrigger=PropertyChanged}"
-                                         Padding="8"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="0" Grid.Column="1"
-                                        Margin="0,0,12,12">
-                                <TextBlock Text="SKU"
-                                           Margin="0,0,0,5"/>
-                                <TextBox Text="{Binding Sku,
-                                    UpdateSourceTrigger=PropertyChanged}"
-                                         Padding="8"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="0" Grid.Column="2"
-                                        Margin="0,0,0,12">
-                                <TextBlock Text="Barcode"
-                                           Margin="0,0,0,5"/>
-                                <TextBox Text="{Binding Barcode,
-                                    UpdateSourceTrigger=PropertyChanged}"
-                                         Padding="8"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="1" Grid.Column="0"
-                                        Margin="0,0,12,12">
-                                <TextBlock Text="Cost Price"
-                                           Margin="0,0,0,5"/>
-                                <TextBox Text="{Binding CostPriceText,
-                                    UpdateSourceTrigger=PropertyChanged}"
-                                         Padding="8"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="1" Grid.Column="1"
-                                        Margin="0,0,12,12">
-                                <TextBlock Text="Selling Price"
-                                           Margin="0,0,0,5"/>
-                                <TextBox Text="{Binding SellingPriceText,
-                                    UpdateSourceTrigger=PropertyChanged}"
-                                         Padding="8"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="1" Grid.Column="2"
-                                        Margin="0,0,0,12">
-                                <TextBlock Text="Current Stock"
-                                           Margin="0,0,0,5"/>
-                                <TextBox Text="{Binding StockQuantityText,
-                                    UpdateSourceTrigger=PropertyChanged}"
-                                         Padding="8"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="2" Grid.Column="0"
-                                        Margin="0,0,12,12">
-                                <TextBlock Text="Reorder Level"
-                                           Margin="0,0,0,5"/>
-                                <TextBox Text="{Binding ReorderLevelText,
-                                    UpdateSourceTrigger=PropertyChanged}"
-                                         Padding="8"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="2" Grid.Column="1"
-                                        Margin="0,0,12,12">
-                                <TextBlock Text="Category"
-                                           Margin="0,0,0,5"/>
-                                <ComboBox ItemsSource="{Binding Categories}"
-                                          SelectedItem="{Binding SelectedCategory}"
-                                          DisplayMemberPath="Name"
-                                          Padding="8"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="2" Grid.Column="2"
-                                        Margin="0,0,0,12">
-                                <TextBlock Text="New Category"
-                                           Margin="0,0,0,5"/>
-                                <DockPanel>
-                                    <Button Content="Add"
-                                            Command="{Binding AddCategoryCommand}"
-                                            DockPanel.Dock="Right"
-                                            Padding="12,5"
-                                            Margin="6,0,0,0"/>
-                                    <TextBox Text="{Binding NewCategoryName,
-                                        UpdateSourceTrigger=PropertyChanged}"
-                                             Padding="8"/>
-                                </DockPanel>
-                            </StackPanel>
-
-                            <WrapPanel Grid.Row="3"
-                                       Grid.ColumnSpan="3"
-                                       HorizontalAlignment="Right"
-                                       Margin="0,8,0,0">
-
-                                <Button Content="New"
-                                        Command="{Binding NewProductCommand}"
-                                        Padding="18,9"
-                                        Margin="0,0,8,0"/>
-
-                                <Button Content="Save Product"
-                                        Command="{Binding SaveProductCommand}"
-                                        Background="#2563EB"
-                                        Foreground="White"
-                                        Padding="18,9"
-                                        Margin="0,0,8,0"/>
-
-                                <Button Content="Deactivate"
-                                        Command="{Binding DeactivateProductCommand}"
-                                        Background="#FEE2E2"
-                                        Foreground="#991B1B"
-                                        Padding="18,9"/>
-                            </WrapPanel>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- Search -->
-                <Border Background="White"
-                        CornerRadius="12"
-                        Padding="18"
-                        Margin="0,0,0,18">
-
-                    <StackPanel>
-                        <TextBlock Text="Search Products"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,8"/>
-
-                        <TextBox Text="{Binding SearchText,
-                                    UpdateSourceTrigger=PropertyChanged}"
-                                 Padding="10"
-                                 ToolTip="Search by product name, SKU or barcode"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Product table -->
-                <Border Background="White"
-                        CornerRadius="12"
-                        Padding="18">
-
-                    <StackPanel>
-                        <TextBlock Text="Product List"
-                                   FontSize="19"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,14"/>
-
-                        <DataGrid ItemsSource="{Binding Products}"
-                                  SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
-                                  AutoGenerateColumns="False"
-                                  IsReadOnly="True"
-                                  CanUserAddRows="False"
-                                  SelectionMode="Single"
-                                  HeadersVisibility="Column"
-                                  GridLinesVisibility="Horizontal"
-                                  RowHeight="38"
-                                  MinHeight="240"
-                                  MaxHeight="390">
-                            <DataGrid.Resources>
-                                <Style x:Key="CenteredCellTextStyle" TargetType="{x:Type TextBlock}">
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                </Style>
-                            </DataGrid.Resources>
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="ID"
-                                    Binding="{Binding ProductId}"
-                                    Width="55" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-
-                                <DataGridTextColumn Header="Product"
-                                    Binding="{Binding Name}"
-                                    Width="2*" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-
-                                <DataGridTextColumn Header="SKU"
-                                    Binding="{Binding SKU}"
-                                    Width="*" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-
-                                <DataGridTextColumn Header="Category"
-                                    Binding="{Binding Category.Name}"
-                                    Width="*" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-
-                                <DataGridTextColumn Header="Price"
-                                    Binding="{Binding SellingPrice,
-                                        StringFormat={}{0:N2}}"
-                                    Width="*" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-
-                                <DataGridTextColumn Header="Stock"
-                                    Binding="{Binding StockQuantity}"
-                                    Width="65" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-
-                                <DataGridTextColumn Header="Reorder At"
-                                    Binding="{Binding ReorderLevel}"
-                                    Width="85" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-
-                                <DataGridTemplateColumn Header="Status" Width="110">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding StockStatus}" VerticalAlignment="Center">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Setter Property="Foreground" Value="#15803D"/>
-
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding StockStatus}" Value="Low Stock">
-                                                                <Setter Property="Foreground" Value="#D97706"/>
-                                                                <Setter Property="FontWeight" Value="SemiBold"/>
-                                                            </DataTrigger>
-
-                                                            <DataTrigger Binding="{Binding StockStatus}" Value="Out of Stock">
-                                                                <Setter Property="Foreground" Value="#DC2626"/>
-                                                                <Setter Property="FontWeight" Value="Bold"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                            </DataGrid.Columns>
-                        </DataGrid>
-
-                        <TextBlock Text="{Binding StatusMessage}"
-                                   Foreground="#475569"
-                                   Margin="0,14,0,0"
-                                   TextWrapping="Wrap"/>
-                    </StackPanel>
-                </Border>
-
-            </StackPanel>
-        </ScrollViewer>
+            <ContentControl Grid.Row="1"
+                            Content="{Binding CurrentView}"
+                            Margin="18"/>
+        </Grid>
     </Grid>
 </Window>

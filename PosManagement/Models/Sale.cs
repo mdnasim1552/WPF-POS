@@ -27,5 +27,8 @@ namespace PosManagement.Models
 
         public ICollection<SaleItem> Items { get; set; }
             = new List<SaleItem>();
+        public decimal TaxRate { get; set; }
+
+        public decimal TaxAmount { get; set; }
     }
 }

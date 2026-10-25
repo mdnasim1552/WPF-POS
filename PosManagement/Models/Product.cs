@@ -43,5 +43,6 @@ namespace PosManagement.Models
                 : StockQuantity <= ReorderLevel
                     ? "Low Stock"
                     : "In Stock";
+        public byte[] RowVersion { get; set; } = Array.Empty<byte>();
     }
 }
