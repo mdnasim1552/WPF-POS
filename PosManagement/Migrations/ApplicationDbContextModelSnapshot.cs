@@ -22,6 +22,57 @@ namespace PosManagement.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("PosManagement.Models.AppUser", b =>
+                {
+                    b.Property<int>("AppUserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AppUserId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FailedLoginAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastLoginAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LockoutEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("AppUserId");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
+                    b.ToTable("AppUsers");
+                });
+
             modelBuilder.Entity("PosManagement.Models.Category", b =>
                 {
                     b.Property<int>("CategoryId")
@@ -130,6 +181,9 @@ namespace PosManagement.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Discount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -162,6 +216,8 @@ namespace PosManagement.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("SaleId");
+
+                    b.HasIndex("CreatedByUserId");
 
                     b.HasIndex("InvoiceNumber")
                         .IsUnique();
@@ -219,6 +275,9 @@ namespace PosManagement.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SaleReturnId"));
 
+                    b.Property<int?>("ProcessedByUserId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Reason")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -240,6 +299,8 @@ namespace PosManagement.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("SaleReturnId");
+
+                    b.HasIndex("ProcessedByUserId");
 
                     b.HasIndex("SaleId");
 
@@ -337,6 +398,16 @@ namespace PosManagement.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("PosManagement.Models.Sale", b =>
+                {
+                    b.HasOne("PosManagement.Models.AppUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedByUser");
+                });
+
             modelBuilder.Entity("PosManagement.Models.SaleItem", b =>
                 {
                     b.HasOne("PosManagement.Models.Product", "Product")
@@ -358,11 +429,18 @@ namespace PosManagement.Migrations
 
             modelBuilder.Entity("PosManagement.Models.SaleReturn", b =>
                 {
+                    b.HasOne("PosManagement.Models.AppUser", "ProcessedByUser")
+                        .WithMany()
+                        .HasForeignKey("ProcessedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("PosManagement.Models.Sale", "Sale")
                         .WithMany()
                         .HasForeignKey("SaleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("ProcessedByUser");
 
                     b.Navigation("Sale");
                 });

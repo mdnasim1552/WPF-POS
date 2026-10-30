@@ -187,6 +187,10 @@
                                 Binding="{Binding RefundAmount,
                                     StringFormat=N2}"
                                 Width="90"/>
+                            <DataGridTextColumn
+                                Header="Processed By"
+                                Binding="{Binding ProcessedBy}"
+                                Width="130"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

@@ -22,5 +22,7 @@ namespace PosManagement.Models
 
         public ICollection<SaleReturnItem> Items { get; set; }
             = new List<SaleReturnItem>();
+        public int? ProcessedByUserId { get; set; }
+        public AppUser? ProcessedByUser { get; set; }
     }
 }

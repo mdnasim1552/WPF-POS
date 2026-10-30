@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using PosManagement.Data;
 using PosManagement.Models;
+using PosManagement.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,7 +16,7 @@ namespace PosManagement.ViewModels
     public partial class PosViewModel : ObservableObject
     {
         private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
-
+        private readonly CurrentUserService _currentUser;
         public ObservableCollection<Product> Products { get; } = new();
         public ObservableCollection<Product> FilteredProducts { get; } = new();
         public ObservableCollection<CartItem> CartItems { get; } = new();
@@ -66,9 +67,11 @@ namespace PosManagement.ViewModels
             CartItems.Sum(item => item.Quantity);
 
         public PosViewModel(
-            IDbContextFactory<ApplicationDbContext> dbFactory)
+            IDbContextFactory<ApplicationDbContext> dbFactory,
+            CurrentUserService currentUser)
         {
             _dbFactory = dbFactory;
+            _currentUser = currentUser;
 
             CartItems.CollectionChanged += (_, e) =>
             {
@@ -317,6 +320,7 @@ namespace PosManagement.ViewModels
                     InvoiceNumber =
                         $"POS-{DateTime.Now:yyyyMMddHHmmss}-{Guid.NewGuid():N}"[..29],
                     SaleDate = DateTime.Now,
+                    CreatedByUserId = _currentUser.UserId,
                     Subtotal = Subtotal,
                     Discount = Discount,
                     Total = Total,

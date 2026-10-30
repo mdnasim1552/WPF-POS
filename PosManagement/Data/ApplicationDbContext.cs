@@ -24,6 +24,7 @@ namespace PosManagement.Data
         public DbSet<SaleReturn> SaleReturns => Set<SaleReturn>();
 
         public DbSet<SaleReturnItem> SaleReturnItems => Set<SaleReturnItem>();
+        public DbSet<AppUser> AppUsers => Set<AppUser>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -103,6 +104,10 @@ namespace PosManagement.Data
 
                 entity.Property(s => s.TaxAmount)
                     .HasPrecision(18, 2);
+                entity.HasOne(s => s.CreatedByUser)
+                    .WithMany()
+                    .HasForeignKey(s => s.CreatedByUserId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
             });
             modelBuilder.Entity<SaleItem>(entity => {
@@ -154,6 +159,10 @@ namespace PosManagement.Data
                     .WithOne(i => i.SaleReturn)
                     .HasForeignKey(i => i.SaleReturnId)
                     .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(r => r.ProcessedByUser)
+                    .WithMany()
+                    .HasForeignKey(r => r.ProcessedByUserId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
             modelBuilder.Entity<SaleReturnItem>(entity =>
             {
@@ -167,7 +176,30 @@ namespace PosManagement.Data
 
                 entity.Property(i => i.RefundAmount)
                     .HasPrecision(18, 2);
-            });            
+            });
+            modelBuilder.Entity<AppUser>(entity =>
+            {
+                entity.HasKey(u => u.AppUserId);
+
+                entity.Property(u => u.Username)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                entity.HasIndex(u => u.Username)
+                    .IsUnique();
+
+                entity.Property(u => u.FullName)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(u => u.PasswordHash)
+                    .HasMaxLength(500)
+                    .IsRequired();
+
+                entity.Property(u => u.Role)
+                    .HasMaxLength(20)
+                    .IsRequired();
+            });
         }
     }
 }
