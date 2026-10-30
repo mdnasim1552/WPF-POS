@@ -322,6 +322,8 @@ namespace PosManagement.Migrations
 
                     b.HasIndex("ProductId");
 
+                    b.HasIndex("SaleId");
+
                     b.ToTable("StockMovements");
                 });
 
@@ -392,7 +394,14 @@ namespace PosManagement.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("PosManagement.Models.Sale", "Sale")
+                        .WithMany()
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Product");
+
+                    b.Navigation("Sale");
                 });
 
             modelBuilder.Entity("PosManagement.Models.Category", b =>
