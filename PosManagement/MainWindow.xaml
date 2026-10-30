@@ -54,6 +54,13 @@
                     <Button Content="  Sales History"
                             Command="{Binding ShowSalesHistoryCommand}"
                             Style="{StaticResource NavigationButtonStyle}"/>
+                    
+                    <Button Content="Return / Refund"
+                            Command="{Binding ShowReturnsCommand}"
+                            Style="{StaticResource NavigationButtonStyle}"/>
+                    <Button Content="Return History"
+                            Command="{Binding ShowReturnHistoryCommand}"
+                            Style="{StaticResource NavigationButtonStyle}"/>
                 </StackPanel>
 
             </DockPanel>

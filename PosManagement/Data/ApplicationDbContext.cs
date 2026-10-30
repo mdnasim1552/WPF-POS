@@ -128,6 +128,11 @@ namespace PosManagement.Data
 
                 entity.Property(m => m.Notes)
                     .HasMaxLength(500);
+
+                entity.HasOne(sm => sm.Sale)
+                    .WithMany()
+                    .HasForeignKey(sm => sm.SaleId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
             modelBuilder.Entity<SaleReturn>(entity =>
             {

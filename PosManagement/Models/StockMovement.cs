@@ -23,6 +23,7 @@ namespace PosManagement.Models
         public int QuantityAfter { get; set; }
 
         public int? SaleId { get; set; }
+        public Sale? Sale { get; set; }
 
         public string? Notes { get; set; }
 

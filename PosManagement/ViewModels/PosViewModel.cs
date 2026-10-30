@@ -357,6 +357,7 @@ namespace PosManagement.ViewModels
                         QuantityChange = -item.Quantity,
                         QuantityBefore = quantityBefore,
                         QuantityAfter = product.StockQuantity,
+                        Sale = sale,
                         Notes = $"Invoice: {sale.InvoiceNumber}"
                     });
                 }

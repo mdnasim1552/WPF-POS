@@ -37,12 +37,15 @@ namespace PosManagement
                         services.AddSingleton<MainViewModel>();
                         services.AddSingleton<ProductsViewModel>();
                         services.AddSingleton<PosViewModel>();
+                        services.AddSingleton<ReturnsViewModel>();
+                        services.AddSingleton<ReturnHistoryViewModel>();
 
 
+                        services.AddTransient<ReturnHistoryView>();
                         services.AddTransient<ProductsView>();
                         services.AddTransient<PosView>();
                         services.AddTransient<SalesHistoryView>();
-
+                        services.AddTransient<ReturnsView>();
                         services.AddTransient<MainWindow>();
                     })
                     .Build();

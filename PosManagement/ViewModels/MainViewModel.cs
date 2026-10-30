@@ -43,7 +43,16 @@ namespace PosManagement.ViewModels
         {
             NavigateTo<SalesHistoryView>("Sales History");
         }
-
+        [RelayCommand]
+        private void ShowReturns()
+        {
+            NavigateTo<ReturnsView>("Return / Refund");
+        }
+        [RelayCommand]
+        private void ShowReturnHistory()
+        {
+            NavigateTo<ReturnHistoryView>("Return History");
+        }
         private void NavigateTo<TView>(string title)
             where TView : UserControl
         {
