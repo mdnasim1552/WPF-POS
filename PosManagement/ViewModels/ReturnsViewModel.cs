@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using PosManagement.Data;
 using PosManagement.Models;
+using PosManagement.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,13 +17,15 @@ namespace PosManagement.ViewModels
     public partial class ReturnsViewModel : ObservableObject
     {
         private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
-
+        private readonly CurrentUserService _currentUser;
         private int? _currentSaleId;
 
         public ReturnsViewModel(
-            IDbContextFactory<ApplicationDbContext> dbFactory)
+            IDbContextFactory<ApplicationDbContext> dbFactory,
+            CurrentUserService currentUser)
         {
             _dbFactory = dbFactory;
+            _currentUser = currentUser;
         }
 
         [ObservableProperty]
@@ -287,6 +290,7 @@ namespace PosManagement.ViewModels
                 var saleReturn = new SaleReturn
                 {
                     SaleId = sale.SaleId,
+                    ProcessedByUserId = _currentUser.UserId,
                     ReturnDate = DateTime.Now,
                     RefundMethod = RefundMethod,
                     Reason = Reason.Trim(),

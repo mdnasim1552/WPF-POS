@@ -30,5 +30,7 @@ namespace PosManagement.Models
         public decimal TaxRate { get; set; }
 
         public decimal TaxAmount { get; set; }
+        public int? CreatedByUserId { get; set; }
+        public AppUser? CreatedByUser { get; set; }
     }
 }

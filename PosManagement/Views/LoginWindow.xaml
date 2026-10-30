@@ -1,0 +1,114 @@
+﻿<Window x:Class="PosManagement.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PosManagement.Views"
+        mc:Ignorable="d"
+        Title="POS Management - Login"
+        Width="430"
+        Height="700"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#F4F6F9">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+    </Window.Resources>
+
+    <Grid Margin="30">
+        <Border Background="White"
+                CornerRadius="12"
+                Padding="28">
+
+            <StackPanel VerticalAlignment="Center">
+
+                <TextBlock Text="POS MANAGEMENT"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           Foreground="#121820"
+                           HorizontalAlignment="Center"/>
+
+                <TextBlock Text="Secure Point of Sale System"
+                           Foreground="#718096"
+                           HorizontalAlignment="Center"
+                           Margin="0,6,0,28"/>
+
+                <!-- First Admin setup -->
+                <StackPanel Visibility="{Binding SetupVisibility}">
+
+                    <TextBlock Text="Initial Administrator Setup"
+                               FontSize="17"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,18"/>
+
+                    <TextBlock Text="Full Name"/>
+                    <TextBox Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}"
+                             Height="38"
+                             Margin="0,5,0,12"
+                             VerticalContentAlignment="Center"/>
+
+                    <TextBlock Text="Username"/>
+                    <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
+                             Height="38"
+                             Margin="0,5,0,12"
+                             VerticalContentAlignment="Center"/>
+
+                    <TextBlock Text="Password"/>
+                    <PasswordBox x:Name="PasswordBox"
+                                 Height="38"
+                                 Margin="0,5,0,12"
+                                 PasswordChanged="PasswordBox_PasswordChanged"/>
+
+                    <TextBlock Text="Confirm Password"/>
+                    <PasswordBox x:Name="ConfirmPasswordBox"
+                                 Height="38"
+                                 Margin="0,5,0,18"
+                                 PasswordChanged="ConfirmPasswordBox_PasswordChanged"/>
+
+                    <Button Content="Create Administrator"
+                            Command="{Binding CreateAdminCommand}"
+                            VerticalContentAlignment="Center"
+                            Height="42"
+                            Background="#2563EB"
+                            Foreground="White"
+                            BorderThickness="0"/>
+                </StackPanel>
+
+                <!-- Normal login -->
+                <StackPanel Visibility="{Binding LoginVisibility}">
+
+                    <TextBlock Text="User Login"
+                               FontSize="17"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,18"/>
+
+                    <TextBlock Text="Username"/>
+                    <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
+                             Height="38"
+                             Margin="0,5,0,15"
+                             VerticalContentAlignment="Center"/>
+
+                    <TextBlock Text="Password"/>
+                    <PasswordBox x:Name="LoginPasswordBox"
+                                 Height="38"
+                                 Margin="0,5,0,20"
+                                 PasswordChanged="LoginPasswordBox_PasswordChanged"/>
+
+                    <Button Content="Login"
+                            Command="{Binding LoginCommand}"
+                            Height="42"
+                            Background="#2563EB"
+                            Foreground="White"
+                            BorderThickness="0"/>
+                </StackPanel>
+
+                <TextBlock Text="{Binding StatusMessage}"
+                           Foreground="#475569"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           Margin="0,18,0,0"/>
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

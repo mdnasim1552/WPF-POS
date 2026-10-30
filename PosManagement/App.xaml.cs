@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PosManagement.Data;
+using PosManagement.Services;
 using PosManagement.ViewModels;
 using PosManagement.Views;
 using System.Configuration;
@@ -39,23 +40,50 @@ namespace PosManagement
                         services.AddSingleton<PosViewModel>();
                         services.AddSingleton<ReturnsViewModel>();
                         services.AddSingleton<ReturnHistoryViewModel>();
-
+                        services.AddTransient<LoginViewModel>();
+                        services.AddSingleton<UserManagementViewModel>();
+                        services.AddSingleton<SalesHistoryViewModel>();
 
                         services.AddTransient<ReturnHistoryView>();
                         services.AddTransient<ProductsView>();
                         services.AddTransient<PosView>();
                         services.AddTransient<SalesHistoryView>();
                         services.AddTransient<ReturnsView>();
+                        services.AddTransient<LoginWindow>();
                         services.AddTransient<MainWindow>();
+                        services.AddTransient<UserManagementView>();
+
+                        services.AddSingleton<PasswordService>();
+                        services.AddSingleton<CurrentUserService>();
+                        services.AddSingleton<AuthenticationService>();
+                        services.AddSingleton<UserManagementService>();
+
                     })
                     .Build();
 
                 await _host.StartAsync();
 
-                var mainWindow =
-                    _host.Services.GetRequiredService<MainWindow>();
+                var loginWindow =
+    _host.Services.GetRequiredService<LoginWindow>();
 
-                mainWindow.Show();
+                bool? loginResult = loginWindow.ShowDialog();
+
+                if (loginResult == true)
+                {
+                    var mainWindow =
+                        _host.Services.GetRequiredService<MainWindow>();
+
+                    MainWindow = mainWindow;
+
+                    // Set shutdown mode after successful login.
+                    ShutdownMode = ShutdownMode.OnMainWindowClose;
+
+                    mainWindow.Show();
+                }
+                else
+                {
+                    Shutdown();
+                }
             }
             catch (Exception ex)
             {

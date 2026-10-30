@@ -159,6 +159,7 @@ namespace PosManagement.ViewModels
 
                 // Return details (latest 500 matching records)
                 var records = await query
+                    .Include(r => r.ProcessedByUser)
                     .Include(r => r.Sale)
                     .Include(r => r.Items)
                         .ThenInclude(i => i.SaleItem)
@@ -179,7 +180,9 @@ namespace PosManagement.ViewModels
                         RefundAmount = record.RefundAmount,
                         RefundMethod = record.RefundMethod,
                         Reason = record.Reason,
-
+                        ProcessedBy = record.ProcessedByUser != null
+                                        ? record.ProcessedByUser.FullName
+                                        : "Historical / Unknown",
                         Items = record.Items.Select(item =>
                             new ReturnHistoryLineViewModel
                             {
@@ -228,7 +231,7 @@ namespace PosManagement.ViewModels
         public decimal RefundAmount { get; set; }
         public string RefundMethod { get; set; } = string.Empty;
         public string Reason { get; set; } = string.Empty;
-
+        public string ProcessedBy { get; set; } = string.Empty;
         public List<ReturnHistoryLineViewModel> Items { get; set; } = new();
     }
 
