@@ -7,6 +7,29 @@ store operations. It manages a product catalog and stock, records sales and
 returns, and provides role-based access for staff. The screens and steps below
 describe the current application.
 
+### Contents
+
+1. [About this manual](#1-about-this-manual)
+2. [Before you start](#2-before-you-start)
+3. [First administrator setup and sign-in](#3-first-administrator-setup-and-sign-in)
+4. [Roles and access](#4-roles-and-access)
+5. [Make a sale](#5-make-a-sale)
+6. [Maintain products and categories](#6-maintain-products-and-categories)
+7. [Review sales and print receipts](#7-review-sales-and-print-receipts)
+8. [Process a return or refund](#8-process-a-return-or-refund)
+9. [Review return history](#9-review-return-history)
+10. [Manage staff accounts](#10-manage-staff-accounts-admin-only)
+11. [Troubleshooting](#11-troubleshooting)
+12. [Data and operational care](#12-data-and-operational-care)
+
+### Reading the steps
+
+Names in **bold** match buttons, fields, or pages in the application. Complete
+the numbered steps in order. A page or action may be hidden when your account
+does not have the required role. Screenshots show example data and may not
+match your store. Use the invoice number and amounts displayed in your own
+application when completing a transaction.
+
 ## 2. Before you start
 
 The application requires:
@@ -34,15 +57,27 @@ dotnet run --project PosManagement/PosManagement.csproj
 
 ## 3. First administrator setup and sign-in
 
+On the first launch against an empty user table, create the administrator
+account before signing in. This initial setup is available only once.
+
+![Initial Administrator Setup form](docs/screenshots/initial-admin-setup.png)
+
+*Figure 1. Initial Administrator Setup. Enter a full name, username, password,
+and matching confirmation.*
+
 1. Start POS Management and wait for the login window to connect to the
    database.
 2. If the database has no user accounts, the **Initial Administrator Setup**
    form appears. Enter your full name and a username.
 3. Enter and confirm a password of at least 8 characters, then select **Create
-   Administrator**.
-4. After the success message, enter the new username and password in **User
-   Login**, then select **Login**.
+   Administrator**. Keep the credentials in a secure place.
+4. After the success message, the setup form is replaced by **User Login**.
+   Enter the new username and password, then select **Login**.
 5. The POS Sales page opens after successful sign-in.
+
+![User Login form](docs/screenshots/login.png)
+
+*Figure 2. User Login. The password is masked while you type.*
 
 The first account is assigned the Admin role. Once a user exists, first-time
 setup is no longer shown. After five consecutive incorrect password attempts,
@@ -66,6 +101,18 @@ appear at the bottom of the navigation area. Use the power icon there to log
 out; confirm the prompt. Logging out returns to the login window.
 
 ## 5. Make a sale
+
+![POS Sales page showing products, shopping cart, and checkout totals](docs/screenshots/pos-sales.png)
+
+*Figure 3. POS Sales. Search and select products on the left; review the cart,
+discount, tax, payment, and cash received on the right.*
+
+### Checkout checklist
+
+Before completing a sale, confirm the selected products and quantities, any
+discount and tax rate, the payment method, and—when the payment is cash—the
+amount received. Checkout is the point at which inventory is reduced and the
+sale is saved.
 
 1. Open **POS / Sales**. The product list shows active items that can be sold.
 2. Search by product name or SKU, or enter/scan a barcode into the search box.
@@ -96,6 +143,11 @@ recorded in Sales History.
 
 Open **Products** (Admin or Manager).
 
+![Product Management page](docs/screenshots/products.png)
+
+*Figure 4. Product Management. Enter product details in the upper form, search
+and select existing products in the list below, and check stock and status.*
+
 ### Add a product
 
 1. Select **New** to clear the form.
@@ -122,7 +174,16 @@ numeric values for prices, stock, and reorder level. Stock cannot be negative.
 The list reports stock as **In Stock**, **Low Stock**, or **Out of Stock** using
 the configured reorder level.
 
+Changing **Current Stock** and saving a product directly sets the quantity.
+For routine receiving or adjustments, follow your store's inventory procedure
+and record the reason outside the application if required; the product form
+does not ask for a stock adjustment reason.
+
 ## 7. Review sales and print receipts
+
+![Sales History page](docs/screenshots/sales-history.png)
+
+*Figure 5. Sales History. Select a sale row before printing its receipt.*
 
 Open **Sales History**. The list is sorted newest first and displays up to the
 500 most recent sales available to your role. Cashiers see only their own
@@ -137,6 +198,11 @@ and change. A printer must be configured in Windows to print a physical copy.
 ## 8. Process a return or refund
 
 Open **Return / Refund** (Admin, Manager, or Cashier).
+
+![Return and Refund page](docs/screenshots/return-refund.png)
+
+*Figure 6. Return / Refund. Search by the original invoice, choose eligible
+items and quantities, set restocking and reason, then review the refund total.*
 
 1. Enter the invoice number from the original sale and select **Search**.
 2. Review the sold quantity, quantities already returned, and remaining
@@ -159,6 +225,11 @@ invoice, and the remaining eligible quantities can be returned later.
 
 ## 9. Review return history
 
+![Return History page with filters, return records, and details](docs/screenshots/return-history.png)
+
+*Figure 7. Return History. Filter records by invoice and/or date, select a row
+to inspect it, and use the tabs for daily and payment summaries.*
+
 Open **Return History** (Admin or Manager). Enter an invoice number and/or set
 a start date and end date, then select **Apply**. The date range includes both
 selected dates. Select **Clear** to remove all filters. The page shows summary
@@ -172,6 +243,11 @@ receipt using the Windows printer dialog.
 ## 10. Manage staff accounts (Admin only)
 
 Open **User Management**.
+
+![User Management page](docs/screenshots/user-management.png)
+
+*Figure 8. User Management. Select a user to load the form, or use **New User**
+to start a new account. The list's **Active** checkbox shows account status.*
 
 ### Create an account
 
@@ -212,3 +288,4 @@ Server. Follow your organization's database backup and retention procedures.
 The software does not configure automatic backups, payment processing, or
 automatic schema migration. Coordinate database changes and connection-string
 updates with the person responsible for the deployment.
+
