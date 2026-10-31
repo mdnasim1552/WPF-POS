@@ -63,6 +63,8 @@ namespace PosManagement.Data
                 entity.ToTable(t => t.HasCheckConstraint(
                     "CK_Products_StockQuantity_NonNegative",
                     "[StockQuantity] >= 0"));
+                entity.Property(p => p.ImagePath)
+                    .HasMaxLength(260);
             });
 
             modelBuilder.Entity<Category>(entity =>

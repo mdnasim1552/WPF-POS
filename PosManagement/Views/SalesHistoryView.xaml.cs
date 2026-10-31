@@ -187,6 +187,20 @@ namespace PosManagement.Views
                     paginator.DocumentPaginator,
                     $"Receipt {sale.InvoiceNumber}");
             }
+            // Configure receipt page size for preview.
+            // Adjust these values for your receipt paper.
+            //document.PageWidth = 280;
+            //document.PagePadding = new Thickness(15);
+
+            //// Let WPF paginate the document.
+            //document.ColumnWidth = double.PositiveInfinity;
+
+            //var previewWindow = new ReceiptPreviewWindow(document)
+            //{
+            //    Owner = Window.GetWindow(this)
+            //};
+
+            //previewWindow.ShowDialog();
         }
     }
 }

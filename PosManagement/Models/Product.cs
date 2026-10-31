@@ -44,5 +44,6 @@ namespace PosManagement.Models
                     ? "Low Stock"
                     : "In Stock";
         public byte[] RowVersion { get; set; } = Array.Empty<byte>();
+        public string? ImagePath { get; set; }
     }
 }
