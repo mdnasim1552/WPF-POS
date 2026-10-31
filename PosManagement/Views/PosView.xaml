@@ -4,8 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PosManagement.Views"
+             xmlns:services="clr-namespace:PosManagement.Services"
              mc:Ignorable="d" 
              Background="#F3F5F9">
+    <UserControl.Resources>
+        <services:ProductImageConverter x:Key="ProductImageConverter"/>
+    </UserControl.Resources>
     <Grid Margin="18">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -70,22 +74,38 @@
                           GridLinesVisibility="Horizontal">
 
                         <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Image" Width="65">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border Width="42"
+                                                Height="42"
+                                                Background="#F3F5F9"
+                                                CornerRadius="5"
+                                                Padding="2">
+
+                                            <Image Source="{Binding ImagePath,
+                                                   Converter={StaticResource ProductImageConverter}}"
+                                                   Stretch="Uniform"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTextColumn Header="Product"
-                            Binding="{Binding Name}"
-                            Width="*"/>
+                                                Binding="{Binding Name}"
+                                                Width="*"/>
 
                             <DataGridTextColumn Header="SKU"
-                            Binding="{Binding SKU}"
-                            Width="85"/>
+                                                Binding="{Binding SKU}"
+                                                Width="85"/>
 
                             <DataGridTextColumn Header="Price"
-                            Binding="{Binding SellingPrice,
-                                StringFormat={}{0:N2}}"
-                            Width="90"/>
+                                                Binding="{Binding SellingPrice,
+                                                StringFormat={}{0:N2}}"
+                                                Width="90"/>
 
                             <DataGridTextColumn Header="Stock"
-                            Binding="{Binding StockQuantity}"
-                            Width="60"/>
+                                                Binding="{Binding StockQuantity}"
+                                                Width="60"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -114,7 +134,7 @@
                     </Grid.RowDefinitions>
 
                     <DockPanel Grid.Row="0" Margin="0,0,0,12">
-                        <TextBlock Text="Shopping Cart"
+                        <TextBlock Text="Shopping Cart "
                                FontSize="19"
                                FontWeight="SemiBold"
                                DockPanel.Dock="Left"/>

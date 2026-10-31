@@ -1,13 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 using PosManagement.Data;
 using PosManagement.Models;
+using PosManagement.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Text;
+using System.Windows.Media;
 
 namespace PosManagement.ViewModels
 {
@@ -59,16 +62,29 @@ namespace PosManagement.ViewModels
         private bool isBusy;
 
         public bool IsEditing => SelectedProduct is not null;
+        private readonly ProductImageService _productImageService;
 
+        [ObservableProperty]
+        private string? selectedImagePath;
+
+        [ObservableProperty]
+        private ImageSource? productImagePreview;
+
+        private bool hasImageChange;
         public ProductsViewModel(
-            IDbContextFactory<ApplicationDbContext> dbFactory)
+            IDbContextFactory<ApplicationDbContext> dbFactory,
+            ProductImageService productImageService)
         {
             _dbFactory = dbFactory;
+            _productImageService = productImageService;
         }
 
         partial void OnSelectedProductChanged(Product? value)
         {
             OnPropertyChanged(nameof(IsEditing));
+
+            SelectedImagePath = null;
+            hasImageChange = false;
 
             if (value is null)
             {
@@ -79,13 +95,21 @@ namespace PosManagement.ViewModels
             ProductName = value.Name;
             Sku = value.SKU;
             Barcode = value.Barcode ?? string.Empty;
-            CostPriceText = value.CostPrice.ToString("0.00", CultureInfo.CurrentCulture);
-            SellingPriceText = value.SellingPrice.ToString("0.00", CultureInfo.CurrentCulture);
+
+            CostPriceText = value.CostPrice.ToString(
+                "0.00", CultureInfo.CurrentCulture);
+
+            SellingPriceText = value.SellingPrice.ToString(
+                "0.00", CultureInfo.CurrentCulture);
+
             StockQuantityText = value.StockQuantity.ToString();
             ReorderLevelText = value.ReorderLevel.ToString();
 
             SelectedCategory = Categories.FirstOrDefault(
                 c => c.CategoryId == value.CategoryId);
+
+            ProductImagePreview =
+                _productImageService.LoadImage(value.ImagePath);
         }
 
         partial void OnSearchTextChanged(string value)
@@ -157,6 +181,7 @@ namespace PosManagement.ViewModels
                 Products.Add(product);
         }
 
+
         [RelayCommand]
         private async Task SaveProductAsync()
         {
@@ -175,7 +200,8 @@ namespace PosManagement.ViewModels
                 !int.TryParse(StockQuantityText, out var stock) ||
                 !int.TryParse(ReorderLevelText, out var reorderLevel))
             {
-                StatusMessage = "Enter valid prices and whole-number quantities.";
+                StatusMessage =
+                    "Enter valid prices and whole-number quantities.";
                 return;
             }
 
@@ -193,9 +219,15 @@ namespace PosManagement.ViewModels
             }
 
             var normalizedSku = Sku.Trim();
+
             var normalizedBarcode = string.IsNullOrWhiteSpace(Barcode)
                 ? null
                 : Barcode.Trim();
+
+            string? newImagePath = null;
+            string? oldImagePath = null;
+            bool newImageCreated = false;
+            bool productInitiallySaved = false;
 
             try
             {
@@ -241,6 +273,8 @@ namespace PosManagement.ViewModels
                         p => p.ProductId == currentId && p.IsActive);
                 }
 
+                oldImagePath = product.ImagePath;
+
                 product.Name = ProductName.Trim();
                 product.SKU = normalizedSku;
                 product.Barcode = normalizedBarcode;
@@ -250,7 +284,40 @@ namespace PosManagement.ViewModels
                 product.StockQuantity = stock;
                 product.ReorderLevel = reorderLevel;
 
+                // Save first so a new product gets its database ID.
+                if (currentId == 0)
+                {
+                    await db.SaveChangesAsync();
+                    productInitiallySaved = true;
+                }
+
+                // Only change the image when the user selected or removed one.
+                if (hasImageChange)
+                {
+                    if (!string.IsNullOrWhiteSpace(SelectedImagePath))
+                    {
+                        newImagePath = _productImageService.SaveProductImage(
+                            SelectedImagePath,
+                            product.ProductId);
+
+                        newImageCreated = true;
+                        product.ImagePath = newImagePath;
+                    }
+                    else
+                    {
+                        product.ImagePath = null;
+                    }
+                }
+
+                // Save the image path and other product changes.
                 await db.SaveChangesAsync();
+
+                // Delete the old image only after the database save succeeds.
+                if (hasImageChange &&
+                    !string.IsNullOrWhiteSpace(oldImagePath))
+                {
+                    _productImageService.DeleteProductImage(oldImagePath);
+                }
 
                 StatusMessage = currentId == 0
                     ? "Product added successfully."
@@ -263,12 +330,20 @@ namespace PosManagement.ViewModels
             }
             catch (DbUpdateException)
             {
+                if (newImageCreated && newImagePath != null)
+                    _productImageService.DeleteProductImage(newImagePath);
+
                 StatusMessage =
                     "Database save failed. Check duplicate SKU/barcode and database constraints.";
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Could not save product: {ex.Message}";
+                if (newImageCreated && newImagePath != null)
+                    _productImageService.DeleteProductImage(newImagePath);
+
+                StatusMessage = productInitiallySaved
+                    ? $"Product record was created, but image or final save failed: {ex.Message}"
+                    : $"Could not save product: {ex.Message}";
             }
             finally
             {
@@ -380,7 +455,53 @@ namespace PosManagement.ViewModels
                 IsBusy = false;
             }
         }
+        [RelayCommand]
+        private void BrowseProductImage()
+        {
+            var dialog = new OpenFileDialog
+            {
+                Title = "Select Product Image",
+                Filter =
+                    "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif|" +
+                    "All Files|*.*",
+                Multiselect = false
+            };
 
+            if (dialog.ShowDialog() != true)
+                return;
+
+            try
+            {
+                var preview = _productImageService.LoadImage(
+                    dialog.FileName);
+
+                if (preview == null)
+                {
+                    StatusMessage = "Could not load the selected image.";
+                    return;
+                }
+
+                SelectedImagePath = dialog.FileName;
+                ProductImagePreview = preview;
+                hasImageChange = true;
+
+                StatusMessage = "Image selected. Save the product to apply it.";
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Could not select image: {ex.Message}";
+            }
+        }
+
+        [RelayCommand]
+        private void RemoveProductImage()
+        {
+            SelectedImagePath = null;
+            ProductImagePreview = null;
+            hasImageChange = true;
+
+            StatusMessage = "Image will be removed when you save the product.";
+        }
         private async Task RefreshProductsAsync()
         {
             await using var db =
@@ -401,11 +522,17 @@ namespace PosManagement.ViewModels
             ProductName = string.Empty;
             Sku = string.Empty;
             Barcode = string.Empty;
+
             CostPriceText = "0.00";
             SellingPriceText = "0.00";
             StockQuantityText = "0";
             ReorderLevelText = "5";
+
             SelectedCategory = null;
+
+            SelectedImagePath = null;
+            ProductImagePreview = null;
+            hasImageChange = false;
         }
     }
 }

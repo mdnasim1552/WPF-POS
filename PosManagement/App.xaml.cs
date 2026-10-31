@@ -52,11 +52,13 @@ namespace PosManagement
                         services.AddTransient<LoginWindow>();
                         services.AddTransient<MainWindow>();
                         services.AddTransient<UserManagementView>();
+                        services.AddTransient<ReceiptPreviewWindow>();
 
                         services.AddSingleton<PasswordService>();
                         services.AddSingleton<CurrentUserService>();
                         services.AddSingleton<AuthenticationService>();
                         services.AddSingleton<UserManagementService>();
+                        services.AddSingleton<ProductImageService>();
 
                     })
                     .Build();
