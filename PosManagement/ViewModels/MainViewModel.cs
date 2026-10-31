@@ -22,6 +22,13 @@ namespace PosManagement.ViewModels
         [ObservableProperty]
         private string currentPageTitle = "POS Sales";
 
+        public bool IsPosSelected => CurrentPageTitle == "POS Sales";
+        public bool IsProductsSelected => CurrentPageTitle == "Products";
+        public bool IsSalesHistorySelected => CurrentPageTitle == "Sales History";
+        public bool IsReturnsSelected => CurrentPageTitle == "Return / Refund";
+        public bool IsReturnHistorySelected => CurrentPageTitle == "Return History";
+        public bool IsUserManagementSelected => CurrentPageTitle == "User Management";
+
         public string CurrentUserName => _currentUser.FullName;
 
         public string CurrentUserRole => _currentUser.Role;
@@ -169,6 +176,13 @@ namespace PosManagement.ViewModels
         {
             CurrentView = _services.GetRequiredService<TView>();
             CurrentPageTitle = title;
+
+            OnPropertyChanged(nameof(IsPosSelected));
+            OnPropertyChanged(nameof(IsProductsSelected));
+            OnPropertyChanged(nameof(IsSalesHistorySelected));
+            OnPropertyChanged(nameof(IsReturnsSelected));
+            OnPropertyChanged(nameof(IsReturnHistorySelected));
+            OnPropertyChanged(nameof(IsUserManagementSelected));
         }
     }
 }

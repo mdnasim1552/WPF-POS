@@ -42,9 +42,59 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.5"/>
                         </Trigger>
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="PosNavigationButtonStyle" TargetType="Button" BasedOn="{StaticResource NavigationButtonStyle}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsPosSelected}" Value="True">
+                <Setter Property="Background" Value="#344563"/>
+                <Setter Property="Foreground" Value="White"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="ProductsNavigationButtonStyle" TargetType="Button" BasedOn="{StaticResource NavigationButtonStyle}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsProductsSelected}" Value="True">
+                <Setter Property="Background" Value="#344563"/>
+                <Setter Property="Foreground" Value="White"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="SalesHistoryNavigationButtonStyle" TargetType="Button" BasedOn="{StaticResource NavigationButtonStyle}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsSalesHistorySelected}" Value="True">
+                <Setter Property="Background" Value="#344563"/>
+                <Setter Property="Foreground" Value="White"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="ReturnsNavigationButtonStyle" TargetType="Button" BasedOn="{StaticResource NavigationButtonStyle}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsReturnsSelected}" Value="True">
+                <Setter Property="Background" Value="#344563"/>
+                <Setter Property="Foreground" Value="White"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="ReturnHistoryNavigationButtonStyle" TargetType="Button" BasedOn="{StaticResource NavigationButtonStyle}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsReturnHistorySelected}" Value="True">
+                <Setter Property="Background" Value="#344563"/>
+                <Setter Property="Foreground" Value="White"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="UserManagementNavigationButtonStyle" TargetType="Button" BasedOn="{StaticResource NavigationButtonStyle}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsUserManagementSelected}" Value="True">
+                <Setter Property="Background" Value="#344563"/>
+                <Setter Property="Foreground" Value="White"/>
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 </ResourceDictionary>

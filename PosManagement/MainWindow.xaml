@@ -92,29 +92,29 @@
 
                         <Button Content="  POS / Sales"
                                 Command="{Binding ShowPosCommand}"
-                                Style="{StaticResource NavigationButtonStyle}"/>
+                                Style="{StaticResource PosNavigationButtonStyle}"/>
 
                         <Button Content="  Products"
                                 Command="{Binding ShowProductsCommand}"
-                                Style="{StaticResource NavigationButtonStyle}"
+                                Style="{StaticResource ProductsNavigationButtonStyle}"
                                 Visibility="{Binding CanManageProducts,
                                     Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                         <Button Content="  Sales History"
                                 Command="{Binding ShowSalesHistoryCommand}"
-                                Style="{StaticResource NavigationButtonStyle}"
+                                Style="{StaticResource SalesHistoryNavigationButtonStyle}"
                                 Visibility="{Binding CanViewSalesHistory,
                                     Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                         <Button Content="  Return / Refund"
                                 Command="{Binding ShowReturnsCommand}"
-                                Style="{StaticResource NavigationButtonStyle}"
+                                Style="{StaticResource ReturnsNavigationButtonStyle}"
                                 Visibility="{Binding CanProcessReturns,
                                     Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                         <Button Content="  Return History"
                                 Command="{Binding ShowReturnHistoryCommand}"
-                                Style="{StaticResource NavigationButtonStyle}"
+                                Style="{StaticResource ReturnHistoryNavigationButtonStyle}"
                                 Visibility="{Binding CanViewReturnHistory,
                                     Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
@@ -131,7 +131,7 @@
 
                         <Button Content="  User Management"
                                 Command="{Binding ShowUserManagementCommand}"
-                                Style="{StaticResource NavigationButtonStyle}"
+                                Style="{StaticResource UserManagementNavigationButtonStyle}"
                                 Visibility="{Binding IsAdmin,
                                     Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
